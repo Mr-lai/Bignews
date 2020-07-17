@@ -15,7 +15,7 @@ $(function () {
 
     // 1.1 页面一加载发送ajax请求
     $.ajax({
-        url: 'http://localhost:8080/api/v1/admin/user/info',
+        url: BigNew.user_info,
         type: 'get',
         dataType: 'json',
         // data:'',
@@ -28,7 +28,7 @@ $(function () {
     });
 
     // 2  点击退出事件
-    $('.logout').click(function () {
+    $('.logout').click(function () { 
         $('#myModal').modal();
         $('.modal-body>p').text('你真的忍心离开伦家嘛?');
         $('#myModal').on('hidden.bs.modal', function (e) { //点击隐藏模态框后执行函数内的代码
@@ -37,5 +37,29 @@ $(function () {
         })
     })
 
+
+    // 3 一级菜单点击事件
+    $('.level01').click(function(){
+        // 排他思想切换类名
+        $(this).addClass('active').siblings().removeClass('active');
+        // 如果点击的是文章管理,则需要展开二级菜单
+        if($(this).index()==1) {
+            //  利用切换动画完成展开和收起
+            $('.level02').slideToggle();
+            // 旋转小箭头
+            $('.level01 b').toggleClass('rotate0');//切换类名完成动画
+            // 点击文章管理,第一个li标签默认高亮
+            $('.level02>li:eq(0)').click();
+        }else {
+            // 如果点击的不是文章管理，则文章管理中所有的li失去高亮
+            $('.level02>li').removeClass('active')
+        }
+    })
+
+    // 4 二级菜单点击事件
+    $('.level02>li').click(function(){
+        // 排他思想切换类名
+        $(this).addClass('active').siblings().removeClass('active');
+    })
 
 })
