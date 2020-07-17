@@ -51,5 +51,38 @@
             </table>
         </div>
     </div>
+    <!-- 模板引擎 -->
+    <script id="ctg" type="text/html">
+        {{each data v}}
+        <tr>
+            <td>{{ v.name }}</td>
+            <td>{{ v.slug}}</td>
+            <td class="text-center">
+                <a data-list="{{v.id}}" href="javascript:void(0);" data-toggle="modal" class=" btn btn-info btn-xs">编辑</a>
+                <a data-list="{{v.id}}" href="javascript:void(0);" class="btn btn-danger btn-xs">删除</a>
+            </td>
+        </tr>
+    {{/each}}
+    </script>
+    <!-- 导入网络中间层 -->
+    <script src="./libs/http.js"></script>
+    <!-- 导入样式交互 -->
+    <script src="./js/article_category.js"></script>
+    <script>
+        $(function () { //入口函数
+            //1.页面一加载发送ajax请求数据
+            $.ajax({
+                url: BigNew.category_list,
+                type: 'get',
+                dataType: 'json',
+                // data:'',
+                success: function (backData) {
+                    console.log(backData);
+                    //   渲染页面
+                    $('.category_table tbody').html( template('ctg', backData))
+                }
+            });
+        })
+    </script>
 
 </html>
