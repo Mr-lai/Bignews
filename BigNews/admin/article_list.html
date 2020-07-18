@@ -13,6 +13,10 @@
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 引入模板引擎js文件 -->
     <script src="./libs/template-web.js"></script>
+    <!-- 导包bootstrap -->
+    <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+    <!-- 导入分页插件 -->
+    <script src="./libs/jquery.twbsPagination.js"></script>
 </head>
 
 <body>
@@ -68,7 +72,9 @@
                     </tr>
                 </tbody>
             </table>
+            <!-- 分页盒子 -->
             <div class="row text-center">
+                <ul id="pagination" class="pagination-sm"></ul>
             </div>
         </div>
     </div>
@@ -114,27 +120,13 @@
                 }
             });
 
-            // 二  文章搜索
-            $.ajax({
-                url: BigNew.article_query,
-                type: 'get',
-                dataType: 'json',
-                data: {
-                    type: '',
-                    state: '',
-                    page: 1,
-                    perpage: 12
-                },
-                success: function (backData) {
-                    console.log(backData);
-                    $('.table>tbody').html(template('article_list', backData))
-                }
-            });
-
-            // 三 文章筛选
-
-            $('#btnSearch').click(function (e) {
-                e.preventDefault(); // 阻止表单默认跳转
+            // 根据页面需求,封装ajax请求函数
+            /**
+            * @description:
+            * @param {type}  Page : 当前页面
+            * @return: 
+            */
+            function getAjaxRequest(Page) {
                 $.ajax({
                     url: BigNew.article_query,
                     type: 'get',
@@ -142,16 +134,57 @@
                     data: {
                         type: $('#selCategory').val(),
                         state: $('#selStatus').val(),
-                        page: 1,
-                        perpage: 12
+                        page: Page, // 默认起始页面
+                        perpage: 12 // 一行显示12条数据
                     },
                     success: function (backData) {
-                        // console.log(backData);
+                        console.log(backData);
+                        
+                        // 渲染页面
                         $('.table>tbody').html(template('article_list', backData))
+
+                        loadPagination(backData.data.totalPage,Page); // 调用分页组件函数
                     }
                 });
+            }
 
+            //  二 文章筛选
+            $('#btnSearch').click(function (e) {
+                e.preventDefault(); // 阻止表单默认跳转
+                getAjaxRequest(1); // ajax请求
             })
+
+            //  页面一加载,调用筛选按钮请求数据
+            $('#btnSearch').click()
+
+            /**
+            * @description: 加载分页组件
+            * @param {type}  totalPage : 总页数
+            * @param {type}  startPage : 起始页
+            * @return: 
+            */
+
+            function loadPagination(totalPage, startPage) {
+                // (1) 先销毁旧插件,
+                $('#pagination').twbsPagination('destroy')
+                // (2) 重新加载新插件
+                $('#pagination').twbsPagination({
+                    totalPages: totalPage, // 总页数
+                    visiblePages: 9, // 可见页面
+                    startPage: startPage, // 起始页
+                    first: '首页', // 首页
+                    prev: '上一页', // 上一页
+                    next: '下一页',//下一页
+                    last: '尾页', //尾页
+                    onPageClick: function (event, page) {
+                        //如果点击的页数与当前页数不一致，则发送ajax请求
+                        if (page != startPage) {
+                            getAjaxRequest(page); // 调用ajax请求函数
+                        };
+
+                    }
+                });
+            }
         })
     </script>
 </body>
