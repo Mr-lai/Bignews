@@ -72,6 +72,88 @@
             </div>
         </div>
     </div>
+    <!-- 一 所有分类模板 -->
+    <script id="sel" type="text/html">
+        <option value="">所有分类</option>
+        {{each data v}}
+        <option value="{{v.id}}">{{v.name}}</option>
+        {{/each}}
+    </script>
+    <!-- 二 所有文章模板 -->
+    <script id="article_list" type="text/html">
+        {{each data.data v}}
+        <tr>
+            <td>{{v.title}}</td>
+            <td>{{v.author}}</td>
+            <td>{{v.category}}</td>
+            <td class="text-center">{{v.date}}</td>
+            <td class="text-center">{{v.state}}</td>
+            <td class="text-center">
+                <a data-id="{{v.id}}" href="article_edit.html?id={{v.id}}" class="btn btn-default btn-xs">编辑</a>
+                <a data-id="{{v.id}}" href="javascript:void(0);" class="btn btn-danger btn-xs delete">删除</a>
+            </td>
+        </tr>
+        {{/each}}
+    </script>
+    <!-- 导入网络中间层 -->
+    <script src="./libs/http.js"></script>
+    <!-- 导入事件交互 -->
+    <script src="./js/article_list.js"></script>
+    <script>
+        $(function () { // 入口函数
+            // 一,进入页面渲染所有文章分类
+            $.ajax({
+                url: BigNew.category_list,
+                type: 'get',
+                dataType: 'json',
+                success: function (backData) {
+                    // console.log(backData);
+                    // 调用官方api渲染页面
+                    $('#selCategory').html(template('sel', backData))
+
+                }
+            });
+
+            // 二  文章搜索
+            $.ajax({
+                url: BigNew.article_query,
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    type: '',
+                    state: '',
+                    page: 1,
+                    perpage: 12
+                },
+                success: function (backData) {
+                    console.log(backData);
+                    $('.table>tbody').html(template('article_list', backData))
+                }
+            });
+
+            // 三 文章筛选
+
+            $('#btnSearch').click(function (e) {
+                e.preventDefault(); // 阻止表单默认跳转
+                $.ajax({
+                    url: BigNew.article_query,
+                    type: 'get',
+                    dataType: 'json',
+                    data: {
+                        type: $('#selCategory').val(),
+                        state: $('#selStatus').val(),
+                        page: 1,
+                        perpage: 12
+                    },
+                    success: function (backData) {
+                        // console.log(backData);
+                        $('.table>tbody').html(template('article_list', backData))
+                    }
+                });
+
+            })
+        })
+    </script>
 </body>
 
 </html>
