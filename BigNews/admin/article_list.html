@@ -141,7 +141,7 @@
                         console.log(backData);
                         // 渲染页面
                         $('.table>tbody').html(template('article_list', backData))
-                        loadPagination(backData.data.totalPage,Page); // 调用分页组件函数
+                        loadPagination(backData.data.totalPage, Page); // 调用分页组件函数
                     }
                 });
             }
@@ -184,8 +184,27 @@
             }
 
             // 三 点击发表文章按钮按钮 
-            $('#release_btn').click(function(){
-               $('.level02>li:eq(1)', window.parent.document).addClass('active').siblings().removeClass('active');
+            $('#release_btn').click(function () {
+                $('.level02>li:eq(1)', window.parent.document).addClass('active').siblings().removeClass('active');
+            })
+
+            // 四,删除文章列表
+            $('.table>tbody').on('click', '.delete', function () {
+                $.ajax({
+                    url: BigNew.article_delete,
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        id: $(this).attr('data-id')
+                    },
+                    success: function (backData) {
+                        if(backData.code==204) {
+                            alert(backData.msg);
+                            window.location.reload()
+                        }
+
+                    }
+                });
             })
         })
     </script>
