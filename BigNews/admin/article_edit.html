@@ -124,6 +124,24 @@
                 }
             });
 
+            var id = window.location.href.split('=')[1] //页面ID
+            //  2.2 获取文章信息
+            $.ajax({
+                url: BigNew.article_search,
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    id: id
+                },
+                success: function (backData) {
+                    $('#inputTitle').val(backData.data.title);//文章标题
+                    $('.article_cover').attr('src', backData.data.cover) //文章封面
+                    $('.category').val(backData.data.categoryId)//文章类别
+                    $('#testico').val(backData.data.date) // 发布时间
+                    editor.txt.html(backData.data.content) //获取文本
+
+                }
+            });
             // 三 文件预览
             //1.给file表单元素注册onchange事件
             $('#inputCover').change(function () {
@@ -135,7 +153,7 @@
                 $('.article_cover').attr('src', url);
             });
 
-            var id = window.location.href.split('=')[1] 
+
             // 四 文件上传
             $('.btn-edit,.btn-draft').on('click', function (e) {
                 var etate = $(this).hasClass('btn-edit') ? '已发布' : '草稿';
@@ -143,10 +161,10 @@
                 e.preventDefault();
                 //创建FormData对象：参数是表单dom对象
                 var fd = new FormData($('.article_form')[0])
-                fd.append('id',id)// 文章id
-                fd.append('date',$('#testico').val());//表单日期
-                fd.append('content',editor.txt.html());//文章内容
-                fd.append('state',etate)
+                fd.append('id', id)// 文章id
+                fd.append('date', $('#testico').val());//表单日期
+                fd.append('content', editor.txt.html());//文章内容
+                fd.append('state', etate)
                 $.ajax({
                     url: BigNew.article_edit,
                     type: 'post',
@@ -155,14 +173,16 @@
                     contentType: false,
                     processData: false,
                     success: function (backData) {
-                        if(backData.code==200) {
+                        if (backData.code == 200) {
                             alert(backData.msg);
-                            window.location.href='./article_list.html';
+                            window.location.href = './article_list.html';
                         }
-                        
+
                     }
                 });
             });
+
+
         })
     </script>
 </body>
