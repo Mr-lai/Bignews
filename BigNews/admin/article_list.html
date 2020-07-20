@@ -95,7 +95,7 @@
             <td class="text-center">{{v.date}}</td>
             <td class="text-center">{{v.state}}</td>
             <td class="text-center">
-                <a data-id="{{v.id}}" href="article_edit.html?id={{v.id}}" class="btn btn-default btn-xs">编辑</a>
+                <a data-id="{{v.id}}" href="article_edit.html?id={{v.id}}" class="btn btn-default btn-xs btn-redact">编辑</a>
                 <a data-id="{{v.id}}" href="javascript:void(0);" class="btn btn-danger btn-xs delete">删除</a>
             </td>
         </tr>
@@ -139,10 +139,8 @@
                     },
                     success: function (backData) {
                         console.log(backData);
-                        
                         // 渲染页面
                         $('.table>tbody').html(template('article_list', backData))
-
                         loadPagination(backData.data.totalPage,Page); // 调用分页组件函数
                     }
                 });
@@ -153,7 +151,6 @@
                 e.preventDefault(); // 阻止表单默认跳转
                 getAjaxRequest(1); // ajax请求
             })
-
             //  页面一加载,调用筛选按钮请求数据
             $('#btnSearch').click()
 
@@ -178,13 +175,18 @@
                     last: '尾页', //尾页
                     onPageClick: function (event, page) {
                         //如果点击的页数与当前页数不一致，则发送ajax请求
-                        if (page != startPage) {
+                        if (page != startPage) {  // page 点击的页面
                             getAjaxRequest(page); // 调用ajax请求函数
                         };
 
                     }
                 });
             }
+
+            // 三 点击发表文章按钮按钮 
+            $('#release_btn').click(function(){
+               $('.level02>li:eq(1)', window.parent.document).addClass('active').siblings().removeClass('active');
+            })
         })
     </script>
 </body>
